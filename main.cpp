@@ -54,7 +54,9 @@ static void ToggleOverview()
 
 static bool IsOverTriggerArea(LONG x, LONG y)
 {
-    return x < 50 && y < 50;
+    // Require the user to exert some force into the corner of the screen
+    // I don't know how this will play with multiple monitors
+    return x < -20 && y < -20;
 }
 
 static void HandleMouseMove(LONG x, LONG y)
