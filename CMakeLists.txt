@@ -1,11 +1,12 @@
 #
-# GNOMEishOverview
+# Win10HotCorner
+#
+# This project is released to the public domain per the Unlicense. See the
+# accompanying LICENSE file for details.
 #
 
-cmake_minimum_required(VERSION 3.5)
-project(GNOMEishOverview)
+cmake_minimum_required(VERSION 3.4)
+project(Win10HotCorner)
 
-set(CMAKE_CXX_STANDARD 11)
-
-set(SOURCE_FILES main.cpp)
-add_executable(GNOMEishOverview ${SOURCE_FILES})
+add_executable(hotcorner main.c)
+set_target_properties(hotcorner PROPERTIES C_STANDARD 99)

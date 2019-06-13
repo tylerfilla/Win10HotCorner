@@ -1,2 +1,3 @@
-# GNOMEishOverview
-I was using Windows 10 and I got homesick
+# Win10HotCorner
+
+A quick-and-dirty window management hot corner for Windows 10 desktops.
