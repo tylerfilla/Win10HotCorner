@@ -1,0 +1,13 @@
+---
+AlignAfterOpenBracket: AlwaysBreak
+AllowShortFunctionsOnASingleLine: Empty
+BinPackArguments: false
+BinPackParameters: false
+ColumnLimit: 120
+ContinuationIndentWidth: 4
+IndentWidth: 2
+PointerAlignment: Left
+SortIncludes: false
+SpaceAfterCStyleCast: true
+
+...
