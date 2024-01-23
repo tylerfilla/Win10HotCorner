@@ -1,7 +1,7 @@
 /*
  * Win10HotCorner
  *
- * This project is released to the public domain per the Unlicense. See the
+ * This project is released to the public domain per the CC0 1.0 waiver. See the
  * accompanying LICENSE file for details.
  */
 
@@ -13,8 +13,17 @@
 
 #pragma comment(linker, "/SUBSYSTEM:WINDOWS")
 
+/** Cooldown period between toggles. */
+const ULONGLONG COOLDOWN_TOGGLE = 500;
+
+/** Last time the task view was toggled. */
+static ULONGLONG lastToggleTime;
+
 static void ToggleTaskView() {
-  OutputDebugStringW(L"Toggling the task view\n");
+  // Skip toggle if the cooldown hasn't elapsed yet
+  if (GetTickCount64() - lastToggleTime < COOLDOWN_TOGGLE) {
+    return;
+  }
 
   // The input events for toggling task view
   // We want to emulate a Win+Tab key chord
@@ -41,28 +50,31 @@ static void ToggleTaskView() {
 
   // Fire off the input events
   SendInput(4, events, sizeof(INPUT));
+
+  // Remember tick time of last toggle
+  lastToggleTime = GetTickCount64();
 }
 
-inline static int IsOverHotCorner(LONG x, LONG y) {
+static int IsOverHotCorner(const LONG x, const LONG y) {
   // Feel free to rewrite this function with your own logic
   // With a single monitor, negative values appear to translate into needing more activiation force
   // I have a hunch that this will fail with multi-monitor configurations, however
-  return x < -50 && y < -50;
+  return x < -15 && y < -15;
 }
 
 static LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam) {
   // If the mouse moved
   if (wParam == WM_MOUSEMOVE) {
     // Get coordinates of mouse cursor
-    MSLLHOOKSTRUCT* event = (MSLLHOOKSTRUCT*) lParam;
-    LONG mx = event->pt.x;
-    LONG my = event->pt.y;
+    const MSLLHOOKSTRUCT* event = (MSLLHOOKSTRUCT*) lParam;
+    const LONG mx = event->pt.x;
+    const LONG my = event->pt.y;
 
     // If the mouse was over the hot corner
     static int mouse_was_hot = -1;
 
     // If the mouse is over the hot corner
-    int mouse_is_hot = IsOverHotCorner(mx, my);
+    const int mouse_is_hot = IsOverHotCorner(mx, my);
 
     // Initialize past state if the program just started up
     if (mouse_was_hot == -1) {
@@ -84,7 +96,7 @@ static LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lPara
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
   // Set up a low-level mouse hook
-  HHOOK hook = SetWindowsHookEx(WH_MOUSE_LL, &LowLevelMouseProc, NULL, 0);
+  const HHOOK hook = SetWindowsHookEx(WH_MOUSE_LL, &LowLevelMouseProc, NULL, 0);
 
   // The message loop
   MSG msg;
